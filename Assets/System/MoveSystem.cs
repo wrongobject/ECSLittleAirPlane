@@ -16,7 +16,7 @@ public class MoveSystem : ComponentSystem
        
         queryBuilder.ForEach((ref MoveComponent move, ref Translation translation, ref EnemyComponent enemyComponent) => {
             //move.speed += move.acc * Time.DeltaTime;
-            translation.Value += new float3( move.speed * Time.DeltaTime,0);
+            translation.Value += new float3( move.dragDir * Time.DeltaTime,0);
         });
       
         queryBuilder = Entities.WithAll(typeof(MoveComponent), typeof(Translation), typeof(Rotation));
