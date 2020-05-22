@@ -13,6 +13,9 @@ public class GameSetting : MonoBehaviour
     public float negtivePlayerAcc = -2;
     public float playerMaxSpeed = 10;
     public int enemyCreateRate = 1;
+    public float enemyRadius = 0.2f;
+    public float playerRadius = 0.5f;
+
     static GameSetting _instance;
 
     public static GameSetting Instance {
