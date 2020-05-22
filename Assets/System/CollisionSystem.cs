@@ -15,10 +15,9 @@ public class CollisionSystem : ComponentSystem
     }
 
     protected override void OnUpdate()
-    {
-        EntityCommandBuffer commandBuffer = new EntityCommandBuffer(Allocator.TempJob);
-        EntityQuery enemyQuery = GetEntityQuery(typeof(EnemyComponent));
-        EntityQuery playerQuery = GetEntityQuery(typeof(PlayerComponent));
+    {        
+        EntityQuery enemyQuery = GetEntityQuery(typeof(EnemyComponent),typeof(Translation));
+        EntityQuery playerQuery = GetEntityQuery(typeof(PlayerComponent), typeof(Translation));
 
         NativeArray<Entity> enemies = enemyQuery.ToEntityArray(Allocator.TempJob);
         NativeArray<Translation> enemyTrans = enemyQuery.ToComponentDataArray<Translation>(Allocator.TempJob);
@@ -61,7 +60,7 @@ public class CollisionSystem : ComponentSystem
     {
         public NativeArray<CollisionData> collisionDatas;
         public ArchetypeChunkComponentType<Translation> translationType;
-        public ArchetypeChunkEntityType entityType;
+        [ReadOnly]public ArchetypeChunkEntityType entityType;
         public NativeQueue<Entity>.ParallelWriter collisionEntity;
         public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
         {
