@@ -4,9 +4,8 @@ using Unity.Mathematics;
 public class PlayerInputSystem : ComponentSystem
 {
     protected override void OnUpdate()
-    {
-        EntityQueryBuilder queryBuilder = Entities.WithAll(typeof(MoveComponent),typeof(PlayerComponent));
-        queryBuilder.ForEach((ref MoveComponent moveComponent,ref PlayerComponent playerComponent) => {
+    {      
+        Entities.ForEach((ref MoveComponent moveComponent,ref PlayerComponent playerComponent) => {
             float2 dir = float2.zero;
             if (Input.GetKey(KeyCode.W))
             {

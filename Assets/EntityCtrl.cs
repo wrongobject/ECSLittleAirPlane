@@ -20,14 +20,14 @@ public class EntityCtrl : IDisposable
             typeof(Translation),                                    
             typeof(EnemyComponent),
             typeof(MoveComponent),
-            
+            typeof(CollisionComponent),
             typeof(SpriteAnimComponent)
             );
 
         _playerType = _world.EntityManager.CreateArchetype(
             typeof(Translation),
             typeof(Rotation),
-            
+            typeof(CollisionComponent),
             typeof(PlayerComponent),
             typeof(MoveComponent),
             typeof(SpriteAnimComponent)
@@ -45,8 +45,9 @@ public class EntityCtrl : IDisposable
             _world.EntityManager.SetComponentData(item, new EnemyComponent());
             _world.EntityManager.SetComponentData(item, new MoveComponent() {
                 acc = 0,
-                speed = UnityEngine.Random.Range(0.1f, GameSetting.Instance.enemySpeedRange),
+                speed = UnityEngine.Random.Range(0.01f, GameSetting.Instance.enemySpeedRange),
             });
+            _world.EntityManager.SetComponentData(item, new CollisionComponent() { radius = GameSetting.Instance.enemyRadius });
         }
         entities.Dispose();
     }
@@ -61,6 +62,8 @@ public class EntityCtrl : IDisposable
             maxSpeed = GameSetting.Instance.playerMaxSpeed,
         });
         _world.EntityManager.SetComponentData(entity, new Rotation() { Value =  quaternion.identity });
+        _world.EntityManager.SetComponentData(entity, new SpriteAnimComponent());
+        _world.EntityManager.SetComponentData(entity, new CollisionComponent() { radius = GameSetting.Instance.playerRadius });
     }
 
     public void Dispose()

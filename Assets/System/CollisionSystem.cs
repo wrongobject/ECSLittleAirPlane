@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using Unity.Jobs;
 using Unity.Collections;
 
+[UpdateAfter(typeof(MoveSystem))]
 public class CollisionSystem : ComponentSystem
 {
     public struct CollisionData
@@ -22,21 +23,21 @@ public class CollisionSystem : ComponentSystem
         NativeArray<Entity> enemies = enemyQuery.ToEntityArray(Allocator.TempJob);
         NativeArray<Translation> enemyTrans = enemyQuery.ToComponentDataArray<Translation>(Allocator.TempJob);
 
-        NativeArray<CollisionData> collisionDatas = new NativeArray<CollisionData>(enemies.Length, Allocator.TempJob);
+        NativeArray<CollisionData> enemyCollisionDatas = new NativeArray<CollisionData>(enemies.Length, Allocator.TempJob);
         for (int i = 0; i < enemies.Length; i++)
         {
-            CollisionData data = new CollisionData();
-            collisionDatas[i] = data;
+            CollisionData data = new CollisionData();           
             data.entity = enemies[i];
             data.position = enemyTrans[i].Value;
             data.radius = GameSetting.Instance.enemyRadius + GameSetting.Instance.playerRadius;
+            enemyCollisionDatas[i] = data;
         }
         enemies.Dispose();
         enemyTrans.Dispose();
 
         NativeQueue<Entity> collisionEnemies = new NativeQueue<Entity>(Allocator.TempJob);
         CollisionDetectJob job = new CollisionDetectJob() {
-            collisionDatas = collisionDatas,
+            collisionDatas = enemyCollisionDatas,
             translationType = GetArchetypeChunkComponentType<Translation>(),
             entityType = GetArchetypeChunkEntityType(),
             collisionEntity = collisionEnemies.AsParallelWriter(),
@@ -44,15 +45,22 @@ public class CollisionSystem : ComponentSystem
         JobHandle handle = job.Schedule(playerQuery);
         handle.Complete();
 
-        NativeArray<Entity> removeEntity = collisionEnemies.ToArray(Allocator.Temp);
-        for (int i = 0; i < removeEntity.Length; i++)
+        
+        if (collisionEnemies.Count > 0)
         {
-            this.EntityManager.DestroyEntity(removeEntity[i]);
+            NativeArray<Entity> removeEntity = collisionEnemies.ToArray(Allocator.Temp);
+            this.EntityManager.DestroyEntity(removeEntity);
+            
+            
+            //foreach (var item in removeEntity)
+            //{
+            //    Debug.LogFormat("remove count:{0},index:{1},version:{2}" , removeEntity.Length,item.Index,item.Version);
+            //}
+            removeEntity.Dispose();
         }
-
         collisionEnemies.Dispose();
-        collisionDatas.Dispose();
-        removeEntity.Dispose();
+        enemyCollisionDatas.Dispose();
+       
     }
 
     [RequireComponentTag(typeof(PlayerComponent))]
@@ -76,7 +84,8 @@ public class CollisionSystem : ComponentSystem
                     float length = math.length(delta);
                     if (length <= collisionDatas[i].radius)
                     {
-                        collisionEntity.Enqueue(entityArray[j]);
+                        collisionEntity.Enqueue(collisionDatas[i].entity);
+                        Debug.LogFormat("enqueue,length:{0},radius:{1},index:{2}",length,collisionDatas[i].radius, collisionDatas[i].entity.Index);
                     }
                 }
             }

@@ -68,7 +68,8 @@ public class GameManager :IDisposable
                 UIManager.Instance.OpenView(EViewType.Game);
                 _entityCtrl.Start();
                 _entityCtrl.CreatePlayer();
-                _entityCtrl.CreateEnemy(2000);
+                //_entityCtrl.CreateEnemy(2000);
+                
                 break;
             case EGameStatus.Over:
                 UIManager.Instance.OpenView(EViewType.Over);
@@ -80,7 +81,7 @@ public class GameManager :IDisposable
     {
         if (_gameState != EGameStatus.Game) return;
 
-        //LoopSpawnEnemy();
+        LoopSpawnEnemy();
     }
 
     private void LoopSpawnEnemy()

@@ -389,14 +389,14 @@ MonoBehaviour:
   playerMat: {fileID: 2100000, guid: 0052fdf9e2d935142bbbf94d4a14c786, type: 2}
   entityMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   enemySpawnRange: 10
-  enemySpeedRange: 0.001
+  enemySpeedRange: 0.01
   maxAccDirStep: 3
-  playerAccParam: 1
+  playerAccParam: 2
   negtivePlayerAcc: -2
-  playerMaxSpeed: 2
+  playerMaxSpeed: 3
   enemyCreateRate: 5
-  enemyRadius: 0.2
-  playerRadius: 0.5
+  enemyRadius: 0.1
+  playerRadius: 0.25
 --- !u!4 &731282480
 Transform:
   m_ObjectHideFlags: 0

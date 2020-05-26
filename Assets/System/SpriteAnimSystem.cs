@@ -184,21 +184,22 @@ public class SpriteAnimSystem : ComponentSystem
         rd2.Dispose();
         rd3.Dispose();
         jobHandles.Dispose();
-
-        NativeArray<Entity> toRemoveEntityArray = toRemoveEntity.ToArray(Allocator.Temp);
-        foreach (var item in toRemoveEntityArray)
+        if (toRemoveEntity.Count > 0)
         {
-            this.EntityManager.DestroyEntity(item);
-        }
+            NativeArray<Entity> toRemoveEntityArray = toRemoveEntity.ToArray(Allocator.Temp);            
+            this.EntityManager.DestroyEntity(toRemoveEntityArray);
+           
+            toRemoveEntityArray.Dispose();
+        }       
         toRemoveEntity.Dispose();
-        toRemoveEntityArray.Dispose();
+       
 
-
-        EntityQueryBuilder queryBuilder = Entities.WithNone(typeof(EnemyComponent)).WithAll(typeof(Translation));
-        queryBuilder.ForEach((ref Translation translation, ref Rotation rotation) =>
+      
+        Entities.ForEach((ref PlayerComponent playerComponent,ref Translation translation, ref Rotation rotation) =>
         {
             Graphics.DrawMesh(GameSetting.Instance.entityMesh, translation.Value, rotation.Value, GameSetting.Instance.playerMat, LayerMask.GetMask("Default"));
         });
+        
     }
 
     private void AddData(RenderData data)
